@@ -9,30 +9,26 @@ incorporated thanks to pivcon & wd5gnr on the vbox forum
 
 to compile :
 
-	sh vdbuild_new include/ vdfuse-v82a.c
+	sh macbuild.sh
 
 ##########################################################
-
-if you need libfuse headers
-
-	apt-get install libfuse-dev
-	yum install libfuse-devel
-
-	or whatever your package manager does
-
 if you need VBox headers
 
 	svn co http://www.virtualbox.org/svn/vbox/trunk/include/
 
-the include/ dir in this tarball was downloaded that way on 1st March 2011
+the include/ dir in this tarball was downloaded that way on 31st July 2011
 
 ##########################################################
 
 to use it (for example read-only, first partition) :
 
-	./vdfuse-v82a -r -f /path/to/vdifile /mntpoint/for/entiredisk
-	sudo mount -o loop,ro /mntpoint/Partition1 /mntpoint/for/firstpartition
-
+	sudo ./vdfuse -tVHD -a -f /Path/To/VHD /Path/To/Mountpoint
+	
+	hdiutil attach -imagekey diskimage-class=CRawDiskImage -nomount /Path/To/Mountpoint/PartitionN
+	
+	mount -t YourFS /dev/diskK /Path/To/ParitionMountPoint
+	
 ##########################################################
 
-users should be members of "fuse" group, and own the dir/mountpoint
+source:
+http://serverfault.com/questions/174278/mount-an-vhd-on-mac-os-x
