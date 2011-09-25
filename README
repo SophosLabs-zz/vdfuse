@@ -30,5 +30,6 @@ to use it (for example read-only, first partition) :
 	
 ##########################################################
 
-source:
+sources:
 http://serverfault.com/questions/174278/mount-an-vhd-on-mac-os-x
+http://forums.virtualbox.org/viewtopic.php?f=26&t=33355&start=0
