@@ -124,8 +124,8 @@ PVBOXHDD hdDisk;
 PVDINTERFACE pVDifs = NULL;
 VDINTERFACE vdError;
 VDINTERFACEERROR vdErrorCallbacks = {
-	.cbSize = sizeof (VDINTERFACEERROR),
-	.enmInterface = VDINTERFACETYPE_ERROR,
+	// .cbSize = sizeof (VDINTERFACEERROR),
+	//.enmInterface = VDINTERFACETYPE_ERROR,
 	.pfnError = vdErrorCallback
 };
 
@@ -305,8 +305,8 @@ main (int argc, char **argv)
 //
 // *** Open the VDI, parse the MBR + EBRs and connect to the fuse service ***
 //
-	if (RT_FAILURE (VDInterfaceAdd (&vdError, "VD Error", VDINTERFACETYPE_ERROR,
-																	&vdErrorCallbacks, NULL, &pVDifs)))
+
+	if (RT_FAILURE (VDInterfaceAdd (&vdError, "VD Error", VDINTERFACETYPE_ERROR, &vdErrorCallbacks, 0, &pVDifs)))
 		usageAndExit ("invalid initialisation of VD interface");
 	if (RT_FAILURE (VDCreate (&vdError, VDTYPE_HDD, &hdDisk)))
 		usageAndExit ("invalid initialisation of VD interface");
@@ -379,14 +379,15 @@ usageAndExit (char *optFormat, ...)
 					 "\t-t\tspecify type (VDI, VMDK, VHD, or raw; default: auto)\n"
 #endif
 					 "\t-f\tVDimage file\n"
-//        "\t-s\tdifferencing disk files\n"    // prevent misuse
+			         "\t-s\tdifferencing disk files\n"    // prevent misuse
 					 "\t-a\tallow all users to read disk\n"
 					 "\t-w\tallow all users to read and write to disk\n"
 					 "\t-g\trun in foreground\n"
 					 "\t-v\tverbose\n"
 					 "\t-d\tdebug\n\n"
-					 "NOTE: you must add the line \"user_allow_other\" (without quotes)\n"
+					 "NOTE: Linux: you must add the line \"user_allow_other\" (without quotes)\n"
 					 "to /etc/fuse.confand set proper permissions on /etc/fuse.conf\n"
+					 "OSX: run with sudo\n"
 					 "for this to work.\n", processName);
 	exit (1);
 }
