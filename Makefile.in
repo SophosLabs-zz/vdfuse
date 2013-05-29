@@ -109,6 +109,7 @@ distcleancheck_listfiles = find . -type f -print
 ACLOCAL = @ACLOCAL@
 ALLOCA = @ALLOCA@
 AMTAR = @AMTAR@
+ARCH_FLAG = @ARCH_FLAG@
 AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
@@ -207,10 +208,10 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-AM_CFLAGS = -Iinclude -I@FUSE_HEADERS@
+AM_CPPFLAGS = -Iinclude -I@FUSE_HEADERS@ @ARCH_FLAG@
 vdfuse_SOURCES = src/vdfuse.c
 vdfuse_LDADD = $(addprefix @VBOX_INSTALL_DIR@/, @VBOX_BINS@)
-vdfuse_LDFLAGS = -Wl,-rpath,@VBOX_INSTALL_DIR@
+vdfuse_LDFLAGS = -Wl,-rpath,@VBOX_INSTALL_DIR@ @ARCH_FLAG@
 all: all-am
 
 .SUFFIXES:
@@ -685,6 +686,7 @@ uninstall-am: uninstall-binPROGRAMS
 	mostlyclean-generic pdf pdf-am ps ps-am tags uninstall \
 	uninstall-am uninstall-binPROGRAMS
 
+#
 #EXTRA_DIST = autogen.sh
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

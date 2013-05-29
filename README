@@ -1,22 +1,31 @@
 #########################################################
+This is a clone of https://github.com/jonathanxavier/vdfuse
+with a few minor updates to make it compile against the latest 
+VirtualBox headers as well as a more portable build system
 
-RADIATION WARNING - use at your own risk
-
-#########################################################
-
-This is a heavily hacked version of vdfuse-v82 with a couple of fixes
-incorporated thanks to pivcon & wd5gnr on the vbox forum
-
-to compile :
-
-	sh macbuild.sh
 
 ##########################################################
-if you need VBox headers
+Usage: (once installed)
+ 
+ Linux: (TODO)
+ 
 
-	svn co http://www.virtualbox.org/svn/vbox/trunk/include/
+ OSX: 
+ > sudo ./vdfuse -tVHD -a -f /path/to/vdi /path/to/mount 
 
-the include/ dir in this tarball was downloaded that way on 31st July 2011
+ > hdiutil attach -imagekey diskimage-class=CRawDiskImage -nomount /path/to/mount/EntireDisk
+ > /dev/diskX   << Pay attention to disk ids assigned
+
+ > mount -t YourFS /dev/diskXsY /path/to/partition/mount
+
+
+##########################################################
+Installation:
+ See INSTALL
+
+##########################################################
+License:
+ See COPYING
 
 ##########################################################
 

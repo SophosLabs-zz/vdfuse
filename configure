@@ -628,13 +628,14 @@ LTLIBOBJS
 LIBOBJS
 ALLOCA
 XMKMF
-EGREP
-GREP
-CPP
 FUSE_HEADERS
 VBOX_BINS_FULL
 VBOX_BINS
 VBOX_INSTALL_DIR
+EGREP
+GREP
+CPP
+ARCH_FLAG
 host_os
 host_vendor
 host_cpu
@@ -3716,7 +3717,7 @@ ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
-CPPFLAGS=-D_FILE_OFFSET_BITS=64
+CPPFLAGS=
 
 # Checks for libraries.
 
@@ -3832,8 +3833,32 @@ case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
 
 case "$host_os" in
   darwin* )
+        CPPFLAGS+=" -arch i386 -lfuse_ino64"
+        ARCH_FLAG=" -arch i386 -lfuse_ino64"
+
         VBOX_INSTALL_DIR="/Applications/VirtualBox.app/Contents/MacOS"
         VBOX_BINS="VBoxDD.dylib VBoxDDU.dylib VBoxVMM.dylib VBoxRT.dylib VBoxDD2.dylib VBoxREM.dylib"
+        { $as_echo "$as_me:${as_lineno-$LINENO}: checking for /usr/local/include/osxfuse/fuse.h" >&5
+$as_echo_n "checking for /usr/local/include/osxfuse/fuse.h... " >&6; }
+if ${ac_cv_file__usr_local_include_osxfuse_fuse_h+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  test "$cross_compiling" = yes &&
+  as_fn_error $? "cannot check for file existence when cross compiling" "$LINENO" 5
+if test -r "/usr/local/include/osxfuse/fuse.h"; then
+  ac_cv_file__usr_local_include_osxfuse_fuse_h=yes
+else
+  ac_cv_file__usr_local_include_osxfuse_fuse_h=no
+fi
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_file__usr_local_include_osxfuse_fuse_h" >&5
+$as_echo "$ac_cv_file__usr_local_include_osxfuse_fuse_h" >&6; }
+if test "x$ac_cv_file__usr_local_include_osxfuse_fuse_h" = xyes; then :
+
+else
+  as_fn_error $? "Please install osxfuse development package" "$LINENO" 5
+fi
+
         FUSE_HEADERS="/usr/local/include/osxfuse"
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for main in -lfuse_ino64" >&5
@@ -3872,60 +3897,12 @@ else
   as_fn_error $? "Could not find fuse_ino64" "$LINENO" 5
 fi
 
-
         ;;
   linux-gnu*)
+        CPPFLAGS+=" -D_FILE_OFFSET_BITS=64"
         VBOX_INSTALL_DIR="/usr/lib/virtualbox"
         VBOX_BINS="VBoxDDU.so"
-        FUSE_HEADERS=$(pkg-config --cflags --libs fuse)
-        { $as_echo "$as_me:${as_lineno-$LINENO}: checking for main in -lfuse" >&5
-$as_echo_n "checking for main in -lfuse... " >&6; }
-if ${ac_cv_lib_fuse_main+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-lfuse  $LIBS"
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-
-int
-main ()
-{
-return main ();
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_link "$LINENO"; then :
-  ac_cv_lib_fuse_main=yes
-else
-  ac_cv_lib_fuse_main=no
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_fuse_main" >&5
-$as_echo "$ac_cv_lib_fuse_main" >&6; }
-if test "x$ac_cv_lib_fuse_main" = xyes; then :
-  break
-else
-  as_fn_error $? "Could not find fuse" "$LINENO" 5
-fi
-
-        ;;
-  *)
-        #Default Case
-        as_fn_error $? "Your platform is not currently supported" "$LINENO" 5
-        ;;
-esac
-
-
-
-
-
-ac_ext=c
+        ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
@@ -4328,6 +4305,53 @@ if test "x$ac_cv_header_fuse_h" = xyes; then :
 else
   as_fn_error $? "Please install fuse development package" "$LINENO" 5
 fi
+
+
+        FUSE_HEADERS=$(pkg-config --cflags --libs fuse)
+        { $as_echo "$as_me:${as_lineno-$LINENO}: checking for main in -lfuse" >&5
+$as_echo_n "checking for main in -lfuse... " >&6; }
+if ${ac_cv_lib_fuse_main+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lfuse  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+
+int
+main ()
+{
+return main ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_fuse_main=yes
+else
+  ac_cv_lib_fuse_main=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_fuse_main" >&5
+$as_echo "$ac_cv_lib_fuse_main" >&6; }
+if test "x$ac_cv_lib_fuse_main" = xyes; then :
+  break
+else
+  as_fn_error $? "Could not find fuse" "$LINENO" 5
+fi
+
+        ;;
+  *)
+        #Default Case
+        as_fn_error $? "Your platform is not currently supported" "$LINENO" 5
+        ;;
+esac
+
+
 
 
 

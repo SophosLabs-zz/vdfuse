@@ -12,7 +12,7 @@ AM_INIT_AUTOMAKE(vdfuse,[0.9])
 AC_PROG_CC
 AC_PROG_INSTALL
 AC_LANG([C])
-CPPFLAGS=-D_FILE_OFFSET_BITS=64
+CPPFLAGS=
 
 # Checks for libraries.
 
@@ -21,15 +21,19 @@ AC_CHECK_PROG(SVN,svn,[yes],[AC_MSG_ERROR(Could not find svn)])
 AC_CANONICAL_HOST
 case "$host_os" in
   darwin* )
+        CPPFLAGS+=" -arch i386 -lfuse_ino64"
+        AC_SUBST(ARCH_FLAG," -arch i386 -lfuse_ino64")
         VBOX_INSTALL_DIR="/Applications/VirtualBox.app/Contents/MacOS"
         VBOX_BINS="VBoxDD.dylib VBoxDDU.dylib VBoxVMM.dylib VBoxRT.dylib VBoxDD2.dylib VBoxREM.dylib"
+        AC_CHECK_FILE([/usr/local/include/osxfuse/fuse.h],,[AC_MSG_ERROR([Please install osxfuse development package])])
         FUSE_HEADERS="/usr/local/include/osxfuse"
         AC_CHECK_LIB([fuse_ino64], [main],[break],[AC_MSG_ERROR(Could not find fuse_ino64)])
-        
         ;;
   linux-gnu*)
+        CPPFLAGS+=" -D_FILE_OFFSET_BITS=64"
         VBOX_INSTALL_DIR="/usr/lib/virtualbox"
         VBOX_BINS="VBoxDDU.so"
+        AC_CHECK_HEADER(fuse.h,,[AC_MSG_ERROR([Please install fuse development package])])
         FUSE_HEADERS=$(pkg-config --cflags --libs fuse)
         AC_CHECK_LIB([fuse], [main],[break],[AC_MSG_ERROR(Could not find fuse)])
         ;;
@@ -42,8 +46,6 @@ AC_SUBST(VBOX_INSTALL_DIR)
 AC_SUBST(VBOX_BINS)
 AC_SUBST(VBOX_BINS_FULL)
 AC_SUBST(FUSE_HEADERS)
-
-AC_CHECK_HEADER(fuse.h,,[AC_MSG_ERROR([Please install fuse development package])])
 
 # Checks for VBox header files.
 AC_CHECK_FILE([include/VBox/vd.h],,[AC_MSG_ERROR([Could not find vbox headers, please run 'fetch_vbox_headers.sh'])])
