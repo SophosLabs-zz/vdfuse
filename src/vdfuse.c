@@ -72,6 +72,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <pthread.h>
+#include "config.h"
 
 #ifdef __GNUC__
 #define UNUSED __attribute__ ((unused))
