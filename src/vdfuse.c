@@ -1,9 +1,8 @@
-/* Original author: h2o on forums.virtualbox.org                        *
- * http://forums.virtualbox.org/viewtopic.php?p=59275                   *
- * Reworked with Terry Ellison                                          *
- * Reworked by Gordon Miller                                            *
- * vdfuse-v82.c - tool for mounting VDI/VMDK/VHD files                  *
- *                                                                      *
+/* Commandline tool for mounting VDI/VMDK/VHD files 					*
+ *  																	*
+ *  Copyright 2009-2011, 2013 by it's authors.  						*
+ *  Some rights reserved. See COPYING, AUTHORS.							*
+ *																		*
  * This program is free software: you can redistribute it and/or modify *
  * it under the terms of the GNU General Public License as published by *
  * the Free Software Foundation, either version 2 of the License, or    *
@@ -16,31 +15,8 @@
  *                                                                      *
  * You should have received a copy of the GNU General Public License    *
  * along with this program. If not, see <http://www.gnu.org/licenses/>. */
-/* VERSION 01  TE  14 Feb 09  Initial release
- *         02  TE  15 Feb 09  Use the stat on the container file as the basis for any getattr on
- *                            the partiton pseudo-files
- *         03  TE  16 Feb 09  Bug corrections from Gavin, plus EntireDisc/Partition interlock.
- *         04  TE  23 Mar 09  Another Bug correction from Gavin, plus addition of printPartition.
- *         05      09 May 09  Change sizes from size_t to uint64_t (size_t is 32-bit on 32-bit systems)
- *                            Fix _FILE_OFFSET_BITS
- *                            Option for older VBox
- *         07      22 Feb 10  VBOX_SUCCESS macro was removed, replace with RT_SUCCESS
- *         08      27 Jun 10  Support for snapshots through frontend (-s option)
- *
- *
- * DESCRIPTION
- *
- * This Fuse module uses the VBox access library to open a VBox supported VD image file and mount
- * it as a Fuse file system.  The mount point contains a flat directory with the following files
- *  *  EntireDisk
- *  *  PartitionN
- *
- * Note that each file should only be opened once and opening EntireDisk should locks out
- * the other files. However, since file close isn't passed to the fuse utilities, I can only 
- * enforce this in a brute fashion:  If you open EntireDisk then all further I/O to 
- * the PartitionN files will fail.  If open any PartitionN file then all further I/O to EntireDisk
- * will fail.  Hence in practice you can only access on or the other within a single mount. 
- *
+
+/* DESCRIPTION
  * This code is structured in the following sections:
  *  *  The main(argc, argv) routine including validation of arguments and call to fuse_main
  *  *  MBR and EBR parsing routines
@@ -51,13 +27,6 @@
  * VirtualBox provided an API to enable you to manipulate VD image files programmatically.
  * This is documented in the embedded source comments.  See for further details
  *    http://www.virtualbox.org/svn/vbox/trunk/include/VBox/VBoxHDD-new.h
- *
- * To compile this you need to pull (wget) the VBox OSE source from http://www.virtualbox.org/downloads.
- * Set the environment variable VBOX_INCLUDE to the include directory within this tree
- *
- * gcc vdfuse.c -o vdfuse `pkg-config --cflags --libs fuse` \
- *     -l:/usr/lib/virtualbox/VBoxDD.so -Wl,-rpath,/usr/lib/virtualbox \
- *     -pthread -I$VBOX_INCLUDE
  *
  */
 #define FUSE_USE_VERSION 26

@@ -1,0 +1,30 @@
+
+
+v01 - 14 Feb 09
+    * Initial release
+
+v02 - 15 Feb 09
+    * Use the stat on the container file as the basis for any getattr on the partiton pseudo-files
+        
+v03 - 16 Feb 09
+    * Bug corrections from Gavin, plus EntireDisc/Partition interlock
+
+v04 - 23 Mar 09
+    * Another Bug correction from Gavin, plus addition of printPartition.
+
+v05 - 09 May 09
+    * Change sizes from size_t to uint64_t (size_t is 32-bit on 32-bit systems)
+    * Fix _FILE_OFFSET_BITS
+    * Option for older VBox
+
+v07 - 22 Feb 10
+    * VBOX_SUCCESS macro was removed, replace with RT_SUCCESS
+
+v08 - 27 Jun 10
+    * Support for snapshots through frontend (-s option)
+
+v09 - 29 May 13
+    * Re-enable hidden -s option
+    * Added autotools build scripts for Linux and OSX
+    * Added script to pull down newer VBox Headers
+    * Fixed minor compilation errors/warning associated with newer VBox API

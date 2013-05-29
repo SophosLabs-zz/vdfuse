@@ -3,12 +3,30 @@ This is a clone of https://github.com/jonathanxavier/vdfuse
 with a few minor updates to make it compile against the latest 
 VirtualBox headers as well as a more portable build system
 
+This Fuse module uses the VBox access library to open a VBox supported VD image file and mount
+it as a Fuse file system.  The mount point contains a flat directory with the following files
+ *  EntireDisk
+ *  PartitionN
+
+Note that each file should only be opened once and opening EntireDisk should locks out
+the other files. However, since file close isn't passed to the fuse utilities, I can only 
+enforce this in a brute fashion:  If you open EntireDisk then all further I/O to 
+the PartitionN files will fail.  If open any PartitionN file then all further I/O to EntireDisk
+will fail.  Hence in practice you can only access on or the other within a single mount. 
+
+##########################################################
+ChangeLog:
+ See ChangeLog
+
+##########################################################
+Installation:
+ See INSTALL
 
 ##########################################################
 Usage: (once installed)
  
  Linux: (TODO)
- 
+
 
  OSX: 
  > sudo ./vdfuse -tVHD -a -f /path/to/vdi /path/to/mount 
@@ -18,24 +36,13 @@ Usage: (once installed)
 
  > mount -t YourFS /dev/diskXsY /path/to/partition/mount
 
-
-##########################################################
-Installation:
- See INSTALL
-
 ##########################################################
 License:
  See COPYING
 
 ##########################################################
-
-to use it (for example read-only, first partition) :
-
-	sudo ./vdfuse -tVHD -a -f /Path/To/VHD /Path/To/Mountpoint
-	
-	hdiutil attach -imagekey diskimage-class=CRawDiskImage -nomount /Path/To/Mountpoint/PartitionN
-	
-	mount -t YourFS /dev/diskK /Path/To/ParitionMountPoint
+Authors:
+ See AUTHORS
 	
 ##########################################################
 
