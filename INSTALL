@@ -2,7 +2,6 @@
 ##########################################################
 Installation:
 
- ./fetch_vbox_headers.sh
  ./configure
  make
  make install
