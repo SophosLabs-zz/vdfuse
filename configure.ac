@@ -12,8 +12,7 @@ AM_INIT_AUTOMAKE(vdfuse,[0.9])
 AC_PROG_CC
 AC_PROG_INSTALL
 AC_LANG([C])
-CPPFLAGS=
-
+CFLAGS=" -D_FILE_OFFSET_BITS=64"
 # Checks for libraries.
 
 AC_CHECK_PROG(SVN,svn,[yes],[AC_MSG_ERROR(Could not find svn)])
@@ -21,20 +20,42 @@ AC_CHECK_PROG(SVN,svn,[yes],[AC_MSG_ERROR(Could not find svn)])
 AC_CANONICAL_HOST
 case "$host_os" in
   darwin* )
-        CPPFLAGS+=" -arch i386 -lfuse_ino64"
-        AC_SUBST(ARCH_FLAG," -arch i386 -lfuse_ino64")
+        FUSE_FLAG="-lfuse_ino64"
+        ARCH=$(uname -p)
+        CFLAGS+=" -D_DARWIN_USE_64_BIT_INODE -arch ${ARCH} ${FUSE_FLAG}"
         VBOX_INSTALL_DIR="/Applications/VirtualBox.app/Contents/MacOS"
-        VBOX_BINS="VBoxDD.dylib VBoxDDU.dylib VBoxVMM.dylib VBoxRT.dylib VBoxDD2.dylib VBoxREM.dylib"
-        AC_CHECK_FILE([/usr/local/include/osxfuse/fuse.h],,[AC_MSG_ERROR([Please install osxfuse development package])])
-        FUSE_HEADERS="/usr/local/include/osxfuse"
-        AC_CHECK_LIB([fuse_ino64], [main],[break],[AC_MSG_ERROR(Could not find fuse_ino64)])
+        VBOX_BINS="VBoxDD.dylib VBoxDDU.dylib VBoxVMM.dylib VBoxRT.dylib VBoxDD2.dylib VBoxREM64.dylib"
+
+        #fuse headers override
+        AC_ARG_WITH([fuse-headers],[AS_HELP_STRING([--with-fuse-headers],[location of the fuse headers])],
+            [FUSE_HEADERS_DIR="$withval"],
+            [FUSE_HEADERS_DIR="/usr/local/include/osxfuse"],
+            )
+
+        AC_CHECK_FILE(${FUSE_HEADERS_DIR}/fuse.h,,[AC_MSG_ERROR([Could not find fuse headers, Please install osxfuse development package])])
+        FUSE_HEADERS=-I${FUSE_HEADERS_DIR}
+        AC_CHECK_LIB([fuse], [main],[break],[AC_MSG_ERROR(Could not find fuse)])
+    
         ;;
   linux-gnu*)
-        CPPFLAGS+=" -D_FILE_OFFSET_BITS=64"
+        FUSE_FLAG=$(pkg-config --libs fuse)
         VBOX_INSTALL_DIR="/usr/lib/virtualbox"
         VBOX_BINS="VBoxDDU.so"
-        AC_CHECK_HEADER(fuse.h,,[AC_MSG_ERROR([Please install fuse development package])])
-        FUSE_HEADERS=$(pkg-config --cflags --libs fuse)
+
+        #fuse headers override
+        AC_ARG_WITH([fuse-headers],[AS_HELP_STRING([--with-fuse-headers],[location of the fuse headers])],
+            [
+                FUSE_HEADERS_DIR="$withval"
+                AC_CHECK_FILE(${FUSE_HEADERS_DIR}/fuse.h,,[AC_MSG_ERROR([Could not find fuse headers])])
+                FUSE_HEADERS=-I${FUSE_HEADERS_DIR}
+            ],
+            [
+                FUSE_HEADERS=$(pkg-config --cflags-only-I fuse)
+                AC_CHECK_HEADER(fuse.h,,[AC_MSG_ERROR([Could not find fuse headers])])
+            ]
+            )
+
+        # Checks for Fuse header files.
         AC_CHECK_LIB([fuse], [main],[break],[AC_MSG_ERROR(Could not find fuse)])
         ;;
   *)
@@ -42,16 +63,19 @@ case "$host_os" in
         AC_MSG_ERROR([Your platform is not currently supported])
         ;;
 esac
-AC_SUBST(VBOX_INSTALL_DIR)
-AC_SUBST(VBOX_BINS)
-AC_SUBST(VBOX_BINS_FULL)
+
 AC_SUBST(FUSE_HEADERS)
+AC_SUBST(FUSE_FLAG)
 
 # Checks for VBox header files.
 AC_CHECK_FILE([include/VBox/vd.h],,[AC_MSG_ERROR([Could not find vbox headers, please run 'fetch_vbox_headers.sh'])])
 
-AC_PATH_X
-AC_FUNC_ALLOCA
+AC_SUBST(VBOX_INSTALL_DIR)
+AC_SUBST(VBOX_BINS)
+AC_SUBST(VBOX_BINS_FULL)
+
+#AC_PATH_X
+#AC_FUNC_ALLOCA
 
 # Checks for typedefs, structures, and compiler characteristics.
 #AC_CHECK_HEADER_STDBOOL
