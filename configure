@@ -3703,7 +3703,7 @@ case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
 
 case "$host_os" in
   darwin* )
-        FUSE_FLAG="-lfuse_ino64"
+        FUSE_FLAG="-losxfuse"
         ARCH=$(uname -p)
         CFLAGS+=" -D_DARWIN_USE_64_BIT_INODE -arch ${ARCH} ${FUSE_FLAG}"
         VBOX_INSTALL_DIR="/Applications/VirtualBox.app/Contents/MacOS"
@@ -3744,13 +3744,13 @@ fi
 
         FUSE_HEADERS=-I${FUSE_HEADERS_DIR}
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for main in -lfuse" >&5
-$as_echo_n "checking for main in -lfuse... " >&6; }
-if ${ac_cv_lib_fuse_main+:} false; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for main in -losxfuse" >&5
+$as_echo_n "checking for main in -losxfuse... " >&6; }
+if ${ac_cv_lib_osxfuse_main+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   ac_check_lib_save_LIBS=$LIBS
-LIBS="-lfuse  $LIBS"
+LIBS="-losxfuse  $LIBS"
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -3764,17 +3764,17 @@ return main ();
 }
 _ACEOF
 if ac_fn_c_try_link "$LINENO"; then :
-  ac_cv_lib_fuse_main=yes
+  ac_cv_lib_osxfuse_main=yes
 else
-  ac_cv_lib_fuse_main=no
+  ac_cv_lib_osxfuse_main=no
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
 LIBS=$ac_check_lib_save_LIBS
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_fuse_main" >&5
-$as_echo "$ac_cv_lib_fuse_main" >&6; }
-if test "x$ac_cv_lib_fuse_main" = xyes; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_osxfuse_main" >&5
+$as_echo "$ac_cv_lib_osxfuse_main" >&6; }
+if test "x$ac_cv_lib_osxfuse_main" = xyes; then :
   break
 else
   as_fn_error $? "Could not find fuse" "$LINENO" 5

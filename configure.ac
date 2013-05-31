@@ -20,7 +20,7 @@ AC_CHECK_PROG(SVN,svn,[yes],[AC_MSG_ERROR(Could not find svn)])
 AC_CANONICAL_HOST
 case "$host_os" in
   darwin* )
-        FUSE_FLAG="-lfuse_ino64"
+        FUSE_FLAG="-losxfuse"
         ARCH=$(uname -p)
         CFLAGS+=" -D_DARWIN_USE_64_BIT_INODE -arch ${ARCH} ${FUSE_FLAG}"
         VBOX_INSTALL_DIR="/Applications/VirtualBox.app/Contents/MacOS"
@@ -34,7 +34,7 @@ case "$host_os" in
 
         AC_CHECK_FILE(${FUSE_HEADERS_DIR}/fuse.h,,[AC_MSG_ERROR([Could not find fuse headers, Please install osxfuse development package])])
         FUSE_HEADERS=-I${FUSE_HEADERS_DIR}
-        AC_CHECK_LIB([fuse], [main],[break],[AC_MSG_ERROR(Could not find fuse)])
+        AC_CHECK_LIB([osxfuse], [main],[break],[AC_MSG_ERROR(Could not find fuse)])
     
         ;;
   linux-gnu*)
