@@ -1,7 +1,7 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_PREREQ([2.69])
+AC_PREREQ([2.67])
 AC_INIT([vdfuse], [0.9], [chris.benninger@sophos.com])
 AC_CONFIG_SRCDIR([src/vdfuse.c])
 AC_CONFIG_HEADERS([src/config.h:config.in])
