@@ -6,7 +6,8 @@ AC_INIT([vdfuse], [0.9], [chris.benninger@sophos.com])
 AC_CONFIG_SRCDIR([src/vdfuse.c])
 AC_CONFIG_HEADERS([src/config.h:config.in])
 
-AM_INIT_AUTOMAKE(vdfuse,[0.9])
+AM_INIT_AUTOMAKE
+#AM_INIT_AUTOMAKE(vdfuse, 0.9)
 
 # Checks for programs.
 AC_PROG_CC
