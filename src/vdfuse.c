@@ -59,6 +59,7 @@
 #define MBR_START 446
 #define EBR_START 446
 #define PARTTYPE_IS_EXTENDED(x) ((x) == 0x05 || (x) == 0x0f || (x) == 0x85)
+#define ENTIRE_DISK_STR "EntireDisk"
 
 void usageAndExit (char *optFormat, ...);
 void vbprintf (const char *format, ...);
@@ -338,28 +339,27 @@ usageAndExit (char *optFormat, ...)
 	}
 //              ---------!---------!---------!---------!---------!---------!---------!---------!
 	fprintf (stderr,
-					 "DESCRIPTION: This Fuse module uses the VirtualBox access library to open a \n"
-					 "VirtualBox supported VD image file and mount it as a Fuse file system.  The\n"
-					 "mount point contains a flat directory containing the files EntireDisk,\n"
-					 "Partition1 .. PartitionN.  These can then be loop mounted to access the\n"
-					 "underlying file systems\n\n"
-					 "USAGE: %s [options] -f image-file mountpoint\n"
-					 "\t-h\thelp\n" "\t-r\treadonly\n"
+     "DESCRIPTION: This Fuse module uses the VirtualBox access library to open a \n"
+     "VirtualBox supported VD image file and mount it as a Fuse file system.  The\n"
+     "mount point contains a flat directory containing the files EntireDisk,\n"
+     "Partition1 .. PartitionN.  These can then be loop mounted to access the\n"
+     "underlying file systems\n\n"
+     "USAGE: %s [options] -f image-file mountpoint\n"
+     "\t-h\thelp\n" "\t-r\treadonly\n"
 #ifndef OLDAPI
-					 "\t-t\tspecify type (VDI, VMDK, VHD, or raw; default: auto)\n"
+     "\t-t\tspecify type (VDI, VMDK, VHD, or raw; default: auto)\n"
 #endif
-					 "\t-f\tVDimage file\n"
-			         "\t-s\tdifferencing disk files\n"    // prevent misuse
-					 "\t-a\tallow all users to read disk\n"
-					 "\t-w\tallow all users to read and write to disk\n"
-					 "\t-g\trun in foreground\n"
-					 "\t-v\tverbose\n"
-					 "\t-d\tdebug\n\n"
-					 "NOTE: Linux: you must add the line \"user_allow_other\" (without quotes)\n"
-					 "to /etc/fuse.confand set proper permissions on /etc/fuse.conf\n"
-					 "OSX: run with sudo\n"
-					 "for this to work.\n", processName);
-	exit (1);
+     "\t-f\tVDimage file\n"
+     "\t-s\tdifferencing disk files\n"    // prevent misuse
+     "\t-a\tallow all users to read disk\n"
+     "\t-w\tallow all users to read and write to disk\n"
+     "\t-g\trun in foreground\n"
+     "\t-v\tverbose\n"
+     "\t-d\tdebug\n\n"
+     "NOTE: \n"
+     "Linux: you must add the line \"user_allow_other\" (without quotes) to /etc/fuse.confand set proper permissions on /etc/fuse.conf\n"
+     "OSX: run with sudo for this to work.\n", processName);
+    exit (1);
 }
 
 void
@@ -407,14 +407,14 @@ initialisePartitionTable (void)
 	MBRblock mbrb;
 
 	memset (partitionTable, 0, sizeof (partitionTable));
-	for (i = 0; i <= (signed) (sizeof (partitionTable) / sizeof (Partition));
-			 i++)
-		partitionTable[i].no = UNALLOCATED;
+	for (i = 0; i <= (signed) (sizeof (partitionTable) / sizeof (Partition)); i++) {
+	    partitionTable[i].no = UNALLOCATED;
+    }
 
 	partitionTable[0].no = 0;
 	partitionTable[0].offset = 0;
 	partitionTable[0].size = DISKsize;
-	strcpy (partitionTable[0].name, "EntireDisk");
+	strcpy (partitionTable[0].name, ENTIRE_DISK_STR);
 //
 // Check that this is unformated or a DOS partitioned disk.  Sorry but other formats not supported.
 //
