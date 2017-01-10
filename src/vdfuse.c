@@ -281,7 +281,6 @@ main (int argc, char **argv)
 		usageAndExit ("invalid initialisation of VD interface");
 	if (RT_FAILURE (VDCreate (&vdError, VDTYPE_HDD, &hdDisk)))
 		usageAndExit ("invalid initialisation of VD interface");
-	DISKopen (diskType, imagefilename);
 
 	for (i = 0; i < differencingLen; i++)
 	{
@@ -290,6 +289,8 @@ main (int argc, char **argv)
 		detectDiskType (&diffType, diffFilename);
 		DISKopen (diffType, diffFilename);
 	}
+
+	DISKopen (diskType, imagefilename);
 
 	initialisePartitionTable ();
 
