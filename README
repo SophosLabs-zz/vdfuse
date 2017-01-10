@@ -25,7 +25,14 @@ Installation:
 ##########################################################
 Usage: (once installed)
  
- Linux: (TODO)
+ Linux:
+ > sudo ./vdfuse -a -r -f /path/to/vmdk /path/to/mount/disk
+
+ > sudo mount.lowntfs-3g -o ignore_case,umask=000,ro,noexec /path/to/mount/disk/Partition2 /path/to/mount/fs/partition2
+
+ Example with differencing disks:
+ (We must set all parents disk in exact same order as they was used)
+ > sudo ./vdfuse -a -r -s "/path/to/common-disk.vmdk" -s "/path/to/snapshots/{99599044-0286-4f46-b8c3-ee5a636dae05}.vmdk" -f "/path/to/latest/snapshots/{875f5b18-655a-4993-826c-7e1e69912537}.vmdk" /path/to/mount
 
 
  OSX: 
